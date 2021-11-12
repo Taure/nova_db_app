@@ -1,0 +1,6 @@
+-sname 'nova_db_app'
+
+-setcookie 'nova_db_app_cookie'
+
++K true
++A30

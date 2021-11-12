@@ -1,0 +1,33 @@
+%% -*- mode: erlang;erlang-indent-level: 4;indent-tabs-mode: nil -*-
+
+[
+ {kernel, [
+           {logger_level, debug},
+           {logger,
+            [{handler, default, logger_std_h,
+              #{ formatter => {logger_formatter, #{ }}}}]}
+          ]},
+ {nova, [
+         {cowboy_configuration, #{
+                                  port => 8080
+                                 }},
+         {dev_mode, true},
+         {bootstrap_application, nova_db_app}, %% Bootstraps the application
+         %% Plugins is written on form {RequestType, Module, Options, Priority}
+         %% Priority is that the lowest number is executed first
+         {plugins, [
+                    {pre_request, nova_request_plugin, #{decode_json_body => true}}
+                   ]}
+        ]},
+{pgo, [{pools, [{default, #{pool_size => 10,
+        host => "localhost",
+        port => 5555,
+        database => "nova_db_app",
+        user => "postgres",
+        password => "root",
+        decode_opts => [return_rows_as_maps,column_name_as_atom]}}]}]},
+{pg_types, [{uuid_format, string},
+            {json_config, {json, [maps, binary], [maps, binary, atom_keys]}}
+           ]}
+  %% Please change your app.src-file instead if you intend to add app-specific configurations
+].
